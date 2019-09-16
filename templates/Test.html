@@ -1,0 +1,13 @@
+{% load call %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for product in products %}
+    <p>{{ product.name }}: ${{ product|convert_price:request.user }}</p>
+{% endfor %}
+</body>
+</html>
