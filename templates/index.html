@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,41 +11,126 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <title>Products</title>
+    <style>
+        body {
+            background: url("{% static 'font.jpg' %}");
+            background-size: 100% 100%;
+
+        }
+
+        .product-title {
+            height: 60px;
+        }
+    </style>
+    <script>
+        var offset = 6;
+        var limit = 6;
+
+        function load_more(btn) {
+            $.ajax(
+                "/api/products/?offset=" + offset + "&limit=" + limit,
+                {
+                    success: function (data) {
+                        offset += limit;
+                        console.log(data);
+                        var products = data.results;
+                        if (offset >= data.count)
+                            $(btn).hide();
+                        for (var i = 0; i < products.length; ++i) {
+                            var product = products[i];
+                            $("#product-list").append(
+                                '  <div class="col-md-auto">\n' +
+                                '            <div class="card" style="width: 250px;">\n' +
+                                '                <img src="' + product.image + '" class="card-img-top" alt="Product image">\n' +
+                                '                <div class="card-body">\n' +
+                                '                    <h5 class="card-title product-title">' + product.name + '</h5>\n' +
+                                '\n' +
+                                '                    <p class="card-text">$' + product.price + '</p>\n' +
+                                '                    <form action="{% url 'cart' %}" method="post">\n' +
+                                '                        <label> Quantity: </label>\n' +
+                                '                        <label>\n' +
+                                '                            <input type="number" name="quantity" style="width: 8rem">\n' +
+                                '                        </label>\n' +
+                                '                        <input type="hidden" name="id" value="' + product.id + '">\n' +
+                                '\n' +
+                                '                        <button type="submit" class="btn btn-primary" style="width: 8rem">Submit</button>\n' +
+                                '                        {% csrf_token %}\n' +
+                                '                    </form>\n' +
+                                '                </div>\n' +
+                                '            </div>\n' +
+                                '        </div>'
+                            );
+                        }
+                    }
+                }
+            );
+
+        }
+
+    </script>
 </head>
 <body>
-<div class="row">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+
+    <a class="navbar-brand dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">Menu: </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+        <a class="dropdown-item" href="/templates/login.html">Login</a>
+        <a class="dropdown-item" href="/templates/register.html">Register</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/templates/cart.html">Shopping Cart</a>
+    </div>
+</nav>
+<div class="row" id="product-list" style="align-content: center">
     {% for product in products %}
-        <div class="col">
-            <div class="card" style="width: 18rem;">
+        <div class="col-md-auto">
+            <div class="card" style="width: 250px;">
                 <img src="{{ product.image }}" class="card-img-top" alt="Product image">
                 <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">${{ product.price }}</p>
-                <form action="{% url 'cart' %}" method="post">
-                    <label> Quantity: </label>
-                    <label>
-                        <input type="number" name="quantity" >
-                    </label>
-                    <input type="hidden" name="id" value="{{ product.id }}">
+                    <h5 class="card-title product-title">{{ product.name }}</h5>
 
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    {% csrf_token %}
-                </form>
-            </div>
+                    <p class="card-text">${{ product.price }}</p>
+                    <form action="{% url 'cart' %}" method="post">
+                        <label> Quantity: </label>
+                        <label>
+                            <input type="number" name="quantity" style="width: 8rem">
+                        </label>
+                        <input type="hidden" name="id" value="{{ product.id }}">
+
+                        <button type="submit" class="btn btn-primary" style="width: 8rem">Submit</button>
+                        {% csrf_token %}
+                    </form>
+                </div>
             </div>
         </div>
     {% endfor %}
-    </div>
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
+    <div class="col"></div>
+</div>
+<button class="btn btn-primary" role="button" onclick="load_more(this)">Load more</button>
+<div>
+
+    {#{% if prev_page %}#}
+    {#    <a class="btn btn-primary" href="{% url 'index' %}?page={{ prev_page }}" role="button">Prev page</a>#}
+    {#{% endif %}#}
+    {##}
+    {#{% if next_page %}#}
+    {#    <a class="btn btn-primary" href="{% url 'index' %}?page={{ next_page }}" role="button">Next page</a>#}
+    {#{% endif %}#}
+    {#</div>#}
+    {#    #кнопка физически##}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+</div>
 </body>
 </html>

@@ -14,15 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 import webapp.views
+from django.conf.urls.static import static
+import Django_Classes.settings
+from rest_framework.routers import DefaultRouter
+import webapp.rest
+
+router = DefaultRouter()
+router.register('products', webapp.rest.ProductViewSet)
+router.register('cartitem', webapp.rest.CartViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', webapp.views.index),
-    path('product/<int:product_id>', webapp.views.product),
-    path('login', webapp.views.LoginView.as_view(), name='login'),
-    path('register', webapp.views.RegisterView.as_view(), name='register'),
-    path('cart', webapp.views.Cart.as_view(), name='cart'),
-    path('Test_Form',webapp.views.TestView.as_view(), name='form')
-]
+                  path('admin/', admin.site.urls),
+                  path('', webapp.views.index, name='index'),
+                  path('product/<int:product_id>', webapp.views.product),
+                  path('login', webapp.views.LoginView.as_view(), name='login'),
+                  path('register', webapp.views.RegisterView.as_view(), name='register'),
+                  path('cart', webapp.views.Cart.as_view(), name='cart'),
+                  path('test', webapp.views.TestView.as_view(), name='test'),
+                  path('shopping', webapp.views.ShoppingCart.as_view(), name='carts'),
+                  path('api/', include(router.urls))
+              ] + static(Django_Classes.settings.MEDIA_URL, document_root=Django_Classes.settings.MEDIA_ROOT)

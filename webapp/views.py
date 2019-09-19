@@ -16,9 +16,23 @@ from .models import *
 
 
 def index(request: HttpRequest):
-    products = Product.objects.all()
-    return render(request, 'index.html', {'products': products})
+    # page = int(request.GET.get('page', 1))
+    # begin = 8 * (page-1)
+    # end = 8 * page
+    # products = Product.objects.all().order_by('id')[begin:end]
+    # count = Product.objects.count()
+    # context = {'products': products}
+    # if page > 1:
+    #     context['prev_page'] = page - 1
+    # if end < count:
+    #     context['next_page'] = page + 1
+    # return render(request, 'index.html', context)
+## Кнопки физически
 
+    products = Product.objects.all().order_by('id')[:6]
+    context = {'products': products}
+    return render(request, 'index.html', context)
+## кнопка REST API
 
 def product(request: HttpRequest, product_id: int):
     try:
@@ -84,3 +98,11 @@ class TestView(View):
             return HttpResponse(b'error')
         else:
             return HttpResponse(form.cleaned_data['username'])
+
+
+class ShoppingCart(View):
+
+    def get(self, request: HttpRequest):
+        products = Product.objects.all()
+        carts = CartItem.objects.all()
+        return render(request, 'cart.html', {'products': products, 'carts': carts})

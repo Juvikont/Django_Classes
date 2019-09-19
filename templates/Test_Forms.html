@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -9,17 +9,17 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-<div class="row justify-content-center">
-    <div class="col-md-auto alert alert-primary">
-        <form action="Test_Forms.html" method="post">
-            <div class="form-group">
-                <label title="Username">{{ form.username }}</label>
+<form action="/test" method="post">
+    <div class="form-group">
+        <div class="row justify-content-center">
+            <div class="col-md-auto alert alert-primary">
+                <label for="input-username">Username</label>
+                {{ form.username }}
+                <label for="input-password">Password</label>
                 {{ form.password }}
                 {% csrf_token %}
                 <button type="submit">submit</button>
             </div>
-        </form>
-    </div>
-</div>
+</form>
 </body>
 </html>
