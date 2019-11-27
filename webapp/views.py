@@ -27,11 +27,13 @@ def index(request: HttpRequest):
     # if end < count:
     #     context['next_page'] = page + 1
     # return render(request, 'index.html', context)
-## Кнопки физически
+    ## Кнопки физически
 
     products = Product.objects.all().order_by('id')[:6]
     context = {'products': products}
     return render(request, 'index.html', context)
+
+
 ## кнопка REST API
 
 def product(request: HttpRequest, product_id: int):

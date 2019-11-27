@@ -58,5 +58,5 @@ class Profile(models.Model):
 
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField(max_length=2,validators=[not_negative])
+    quantity = models.IntegerField(max_length=2, validators=[not_negative])
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
